@@ -29,9 +29,11 @@ class Fodder:
             # diyadipinjianzai_dongzuo
             fuhe_helper_table = self.nutrient_dict[Fodder.Nutrient.fuhe].crop(['负荷ID号', 'BPA名', '有功值', '无功值'])
             length = len(self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo].rows)
+            # print(self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo].rows)
             self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo] = self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo].join(fuhe_helper_table, ['BPA名'], ['BPA名'])
+            # print(self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo].rows)
             if len(self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo].rows) != length:
-                print(self.name)
+                print('\n动作一负荷对应不上\n')
                 raise RuntimeError()
             self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo].expand(['有功减少量百分比', '无功减少量百分比'], Fodder.expand_diyadipinjianzai_dongzuo)
 
