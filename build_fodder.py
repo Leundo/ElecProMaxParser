@@ -12,18 +12,21 @@ from tqdm import tqdm
 
 fodder_subname = '20231101'
 area_table = Table.load('Area')
+empty_diya_table = Table.load('Empty_Diya')
+empty_gaozhou_table = Table.load('Empty_Gaozhou')
+
 
 bundle_paths = file_manager.get_bundle_paths(fodder_subname)
 
-for bundle_path in tqdm(bundle_paths):   
-    # fodder = Fodder.new_v0(bundle_path, area_table)
-    # fodder.standlize_power()
-    # fodder.save(os.path.join(constant.fodder_folder_path, fodder_subname))
+for bundle_path in tqdm(bundle_paths[22:]):   
+    fodder = Fodder.new_v0(bundle_path, area_table, empty_diya_table, empty_gaozhou_table)
+    fodder.standlize_power()
+    fodder.save(os.path.join(constant.fodder_folder_path, fodder_subname))
          
-    try:
-        fodder = Fodder.new_v0(bundle_path, area_table)
-        fodder.standlize_power()
-        fodder.save(os.path.join(constant.fodder_folder_path, fodder_subname))
-    except Exception as error:
-        print(bundle_path, error)
+    # try:
+    #     fodder = Fodder.new_v0(bundle_path, area_table)
+    #     fodder.standlize_power()
+    #     fodder.save(os.path.join(constant.fodder_folder_path, fodder_subname))
+    # except Exception as error:
+    #     print(bundle_path, error)
     

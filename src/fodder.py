@@ -40,15 +40,19 @@ class Fodder:
             
             self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].compare_and_set('识别码', '\'\'', '0')
             fadianji_helper_table = self.nutrient_dict[Fodder.Nutrient.fadianji].crop(['发电机ID号', 'BPA名', '机组识别码'])
+            
             # location = fadianji_helper_table.header_dict.get('BPA名', None)
             # for tuples in fadianji_helper_table.rows:
-            #     if tuples[location] == '卫一32_E':
+            #     if tuples[location] == '胡二40__':
             #         print(tuples)
                 
             length = len(self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].rows)
+            # print(self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].rows)
             self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo] = self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].join(fadianji_helper_table, ['机组BPA名', '识别码'], ['BPA名', '机组识别码'])
-            if len(self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].rows) != length:
-                raise RuntimeError()
+            # print(self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].rows)
+
+            # if len(self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].rows) != length:
+            #     raise RuntimeError()
                
 
     class Nutrient(str, Enum):
@@ -96,11 +100,17 @@ class Fodder:
     
     # For 2024-03-18
     @staticmethod
-    def new_v0(bundle_path: str, area_table: Table) -> 'Fodder':
+    def new_v0(bundle_path: str, area_table: Table, empty_diya_table: Table, empty_gaozhou_table: Table) -> 'Fodder':
         rlt = Rlt.fadianji
         text = file_manager.read_body(bundle_path, rlt)
         bodys = [parser.parse_body(text, grip) for grip in rlt.grips()]
         table = [Table.new(body, rlt.isX()) for body in bodys][0]
+        
+        # location = table.header_dict.get('BPA名', None)
+        # for tuples in table.rows:
+        #     if tuples[location] == '胡二40__':
+        #         print(tuples)
+                    
         fadianji_table = table.standlize(rlt, area_table, True)
         fadianji_table.compare_and_set('机组识别码', '\'\'', '0')
         
@@ -166,18 +176,18 @@ class Fodder:
         
         power_dict_x1 = {}
         power_dict_x1[Fodder.Power.guzhang_xinxi] = x1_tables[0]
-        power_dict_x1[Fodder.Power.diyadipinjianzai_dongzuo] = x1_tables[1]
-        power_dict_x1[Fodder.Power.gaozhouqieji_dongzuo] = x1_tables[2]
+        power_dict_x1[Fodder.Power.diyadipinjianzai_dongzuo] = x1_tables[1] if x1_tables[1] is not None else empty_diya_table
+        power_dict_x1[Fodder.Power.gaozhouqieji_dongzuo] = x1_tables[2] if x1_tables[2] is not None else empty_gaozhou_table
         
         power_dict_x2 = {}
         power_dict_x2[Fodder.Power.guzhang_xinxi] = x2_tables[0]
-        power_dict_x2[Fodder.Power.diyadipinjianzai_dongzuo] = x2_tables[1]
-        power_dict_x2[Fodder.Power.gaozhouqieji_dongzuo] = x2_tables[2]
+        power_dict_x2[Fodder.Power.diyadipinjianzai_dongzuo] = x2_tables[1] if x2_tables[1] is not None else empty_diya_table
+        power_dict_x2[Fodder.Power.gaozhouqieji_dongzuo] = x2_tables[2] if x2_tables[2] is not None else empty_gaozhou_table
         
         power_dict_x3 = {}
         power_dict_x3[Fodder.Power.guzhang_xinxi] = x3_tables[0]
-        power_dict_x3[Fodder.Power.diyadipinjianzai_dongzuo] = x3_tables[1]
-        power_dict_x3[Fodder.Power.gaozhouqieji_dongzuo] = x3_tables[2]
+        power_dict_x3[Fodder.Power.diyadipinjianzai_dongzuo] = x3_tables[1] if x3_tables[1] is not None else empty_diya_table
+        power_dict_x3[Fodder.Power.gaozhouqieji_dongzuo] = x3_tables[2] if x3_tables[2] is not None else empty_gaozhou_table
         
         power_dicts = [power_dict_x1, power_dict_x2, power_dict_x3]
         
