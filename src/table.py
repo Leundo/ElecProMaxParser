@@ -3,7 +3,7 @@ import os
 import sys
 import pickle
 from enum import Enum
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Callable, Tuple
 
 import src.constant as constant
 from src.file_manager import Rlt
@@ -52,6 +52,24 @@ class Table:
             header_dict=new_header_dict,
             rows=new_rows
         )
+        
+    # Callable(self) -> (items, headers)
+    def expand(self, new_headers: List[str], fn: Callable[['Table', List[str]], List[str]]):
+        header_length = len(self.headers)
+        self.headers += new_headers
+        for index, new_header in enumerate(new_headers):
+            self.header_dict[new_header] = header_length + index
+            
+        for index in range(len(self.rows)):
+            self.rows[index] += fn(self, self.rows[index])
+            
+    def compare_and_set(self, header: str, expectation: str, value: str):
+        location = self.header_dict.get(header, None)
+        if location is None:
+            raise RuntimeError()
+        for index in range(len(self.rows)):
+            if self.rows[index][location] == expectation:
+                self.rows[index][location] = value
         
         
     def join(self, table: 'Table', this_headers: List[str], that_headers: List[str], title: Optional[str] = None):
@@ -118,9 +136,9 @@ class Table:
             return None
         title = lines[0][1:-1]
         if isX:
-            headers = lines[1][1:].split()
-        else:
             headers = lines[1][2:].split()
+        else:
+            headers = lines[1][1:].split()
         header_dict = {}
         for index, header in enumerate(headers):
             header_dict[header] = index
@@ -144,23 +162,23 @@ class Table:
             new_rows = []
             
             if rlt == Rlt.jiaoliuxianduan:
-                yiduan_location = self.header_dict.get('一端厂站ID号', None)
-                erduan_location = self.header_dict.get('二端厂站ID号', None)
+                yiduan_location = new_table.header_dict.get('一端厂站ID号', None)
+                erduan_location = new_table.header_dict.get('二端厂站ID号', None)
                 if yiduan_location is None or erduan_location is None:
                     raise RuntimeError()
                 
-                for tuples in self.rows:
+                for tuples in new_table.rows:
                     if area_table.pick('厂站ID', tuples[yiduan_location], '分区名称') in ['西北', '新疆', '甘肃', '青海', '宁夏', '陕西'] and area_table.pick('厂站ID', tuples[erduan_location], '分区名称') in ['西北', '新疆', '甘肃', '青海', '宁夏', '陕西']:
                         new_rows.append(tuples)
             else:
                 if rlt == Rlt.huanliuqi:
-                    location = self.header_dict.get('厂站', None)
+                    location = new_table.header_dict.get('厂站', None)
                 else:
-                    location = self.header_dict.get('厂站ID号', None)
+                    location = new_table.header_dict.get('厂站ID号', None)
                 if location is None:
                     raise RuntimeError()
                 
-                for tuples in self.rows:
+                for tuples in new_table.rows:
                     if area_table.pick('厂站ID', tuples[location], '分区名称') in ['西北', '新疆', '甘肃', '青海', '宁夏', '陕西']:
                         new_rows.append(tuples)
                         

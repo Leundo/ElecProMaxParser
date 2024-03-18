@@ -8,7 +8,7 @@ from src.table import Table
 from src.file_manager import Rlt
 
 
-bundle_path = file_manager.get_bundle_paths()[0]
+bundle_path = file_manager.get_bundle_paths('20231101')[0]
 rlt = Rlt.fenqu
 text = file_manager.read_body(bundle_path, rlt)
 bodys = [parser.parse_body(text, grip) for grip in rlt.grips()]

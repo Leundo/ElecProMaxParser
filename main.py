@@ -12,7 +12,18 @@ from src.file_manager import Rlt
 
 area_table = Table.load('Area')
 
-bundle_paths = file_manager.get_bundle_paths()
-for bundle_path in bundle_paths:
+bundle_paths = file_manager.get_bundle_paths('20231101')
+for bundle_path in bundle_paths[1:]:
     fodder = Fodder.new_v0(bundle_path, area_table)
+    fodder.standlize_power()
     print(fodder)
+    break
+        
+    try:
+        fodder = Fodder.new_v0(bundle_path, area_table)
+        fodder.standlize_power()
+        print(fodder)
+        break
+    except Exception as error:
+        print(error)
+    
