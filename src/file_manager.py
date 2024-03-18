@@ -73,6 +73,7 @@ class Rlt(str, Enum):
         
         
         raise Exception("Unknown rlt.")
+        
     
     def second_targets(self) -> List[str]:
         raise Exception("Unknown rlt.")
