@@ -86,7 +86,13 @@ class Fodder:
         if yd_location is None or y_location is None or wd_location is None or w_location is None:
             raise RuntimeError()
         
-        return [str(float(tuples[yd_location]) / float(tuples[y_location])), str(float(tuples[wd_location]) / float(tuples[w_location]))]
+        if float(tuples[y_location]) == 0 or float(tuples[w_location]) == 0:
+            return ['0', '0']
+        elif float(tuples[y_location]) == 0:
+            return [str(float(tuples[wd_location]) / float(tuples[w_location])), str(float(tuples[wd_location]) / float(tuples[w_location]))]
+        else:
+            return [str(float(tuples[yd_location]) / float(tuples[y_location])), str(float(tuples[yd_location]) / float(tuples[y_location]))]
+
     
     # For 2024-03-18
     @staticmethod
