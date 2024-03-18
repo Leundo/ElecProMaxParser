@@ -51,8 +51,8 @@ class Fodder:
             self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo] = self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].join(fadianji_helper_table, ['机组BPA名', '识别码'], ['BPA名', '机组识别码'])
             # print(self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].rows)
 
-            # if len(self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].rows) != length:
-            #     raise RuntimeError()
+            if len(self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].rows) != length:
+                raise RuntimeError()
                
 
     class Nutrient(str, Enum):

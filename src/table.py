@@ -170,6 +170,21 @@ class Table:
                 for tuples in new_table.rows:
                     if area_table.pick('厂站ID', tuples[yiduan_location], '分区名称') in ['西北', '新疆', '甘肃', '青海', '宁夏', '陕西'] and area_table.pick('厂站ID', tuples[erduan_location], '分区名称') in ['西北', '新疆', '甘肃', '青海', '宁夏', '陕西']:
                         new_rows.append(tuples)
+            elif rlt == Rlt.fadianji:
+                location = new_table.header_dict.get('厂站ID号', None)
+                if location is None:
+                    raise RuntimeError()
+                
+                # bpa_location = new_table.header_dict.get('BPA名', None)
+                # for index, tuples in enumerate(new_table.rows):
+                #     if tuples[bpa_location] == '胡二40__':
+                #         print(area_table.pick('厂站ID', tuples[location], '分区名称'))
+                #         print(tuples)
+                
+                for tuples in new_table.rows:
+                    if area_table.pick('厂站ID', tuples[location], '分区名称') in ['西北', '新疆', '甘肃', '青海', '宁夏', '陕西']:
+                        new_rows.append(tuples)
+                        
             else:
                 if rlt == Rlt.huanliuqi:
                     location = new_table.header_dict.get('厂站', None)
