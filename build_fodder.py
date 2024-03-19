@@ -33,19 +33,19 @@ def build_area_table(bundle_path: str) -> Table:
 
 bundle_paths = file_manager.get_bundle_paths(fodder_subname)
 
-for bundle_path in tqdm(bundle_paths):
+for bundle_path in tqdm(bundle_paths[81:]):
     ## Area Begin
     area_table = build_area_table(bundle_path)
     ## Area End
 
-    # fodder = Fodder.new_v0(bundle_path, area_table, empty_diya_table, empty_gaozhou_table)
-    # fodder.standlize_power()
-    # fodder.save(os.path.join(constant.fodder_folder_path, fodder_subname))
+    fodder = Fodder.new_v0(bundle_path, area_table, empty_diya_table, empty_gaozhou_table)
+    fodder.standlize_power()
+    fodder.save(os.path.join(constant.fodder_folder_path, fodder_subname))
          
-    try:
-        fodder = Fodder.new_v0(bundle_path, area_table, empty_diya_table, empty_gaozhou_table)
-        fodder.standlize_power()
-        fodder.save(os.path.join(constant.fodder_folder_path, fodder_subname))
-    except Exception as error:
-        print('\n', bundle_path, error, '\n')
+    # try:
+    #     fodder = Fodder.new_v0(bundle_path, area_table, empty_diya_table, empty_gaozhou_table)
+    #     fodder.standlize_power()
+    #     fodder.save(os.path.join(constant.fodder_folder_path, fodder_subname))
+    # except Exception as error:
+    #     print('\n', bundle_path, error, '\n')
     

@@ -31,6 +31,7 @@ class Fodder:
             length = len(self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo].rows)
             # print(self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo].rows)
             self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo] = self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo].join(fuhe_helper_table, ['BPA名'], ['BPA名'])
+            Fodder.reduce_diyadipinjianzai_dongzuo(self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo])
             # print(self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo].rows)
             if len(self.power_dicts[index][Fodder.Power.diyadipinjianzai_dongzuo].rows) != length:
                 print('\n动作一负荷对应不上\n')
@@ -54,6 +55,7 @@ class Fodder:
             # print(self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].rows)
 
             if len(self.power_dicts[index][Fodder.Power.gaozhouqieji_dongzuo].rows) != length:
+                print('\n动作二发电机对应不上\n')
                 raise RuntimeError()
                
 
@@ -82,6 +84,37 @@ class Fodder:
         filename = '{}.data'.format(title)
         with open(os.path.join(load_path, filename), 'rb') as file:
             return pickle.load(file)
+        
+    
+    # 按照 BPA 成组
+    @staticmethod
+    def reduce_diyadipinjianzai_dongzuo(table: Table):
+        rows_dict = {}
+        bpa_location = table.header_dict.get('BPA名', None)
+        id_location = table.header_dict.get('负荷ID号', None)
+        y_location = table.header_dict.get('有功值', None)
+        w_location = table.header_dict.get('无功值', None)
+        if bpa_location is None or id_location is None or y_location is None or w_location is None:
+            raise RuntimeError()
+        for tuples in table.rows:
+            bpa = tuples[bpa_location]
+            items = rows_dict.get(bpa, None)
+            if items is None:
+                rows_dict[bpa] = [tuples]
+            else:
+                rows_dict[bpa] = items + [tuples]
+        new_rows = []
+        for bpa, rows in rows_dict.items():
+            new_tuples = rows[0]
+            new_id = min(rows, key=lambda tuples: int(tuples[id_location]))[id_location]
+            new_y = str(sum(float(tuples[y_location]) for tuples in rows))
+            new_w = str(sum(float(tuples[w_location]) for tuples in rows))
+            new_tuples[id_location] = new_id
+            new_tuples[y_location] = new_y
+            new_tuples[w_location] = new_w
+            new_rows.append(new_tuples)
+        table.rows = new_rows
+        
         
     @staticmethod
     def expand_diyadipinjianzai_dongzuo(table: Table, tuples: List[str]):
